@@ -15,7 +15,7 @@ for ind = 1:opt.numFiles
 	imFile = files{ind};
 	fprintf('file: %s\n', imFile);
 	joints(:, :, ind) = applyNetImage([opt.inputDir imFile], net, opt);
-	if opt.visualise; waitforbuttonpress; end
+	if opt.visualise; end
 end
 
 end

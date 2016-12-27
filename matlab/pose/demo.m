@@ -10,17 +10,17 @@ opt.useGPU = true; 			% Run on GPU
 opt.dims = [256 256]; 		% Input dimensions (needs to match matlab.txt)
 opt.numJoints = 7; 			% Number of joints
 opt.layerName = 'conv5_fusion'; % Output layer name
-opt.modelDefFile = '../../models/heatmap-flic-fusion/matlab.prototxt'; % Model definition
-opt.modelFile = '../../models/heatmap-flic-fusion/caffe-heatmap-flic.caffemodel'; % Model weights
+opt.modelDefFile = '/Users/rizkyario/Documents/Codes/DeepLearning/caffe-heatmap/models/heatmap-flic-fusion/matlab.prototxt'; % Model definition
+opt.modelFile = '/Users/rizkyario/Documents/Codes/DeepLearning/caffe-heatmap/models/heatmap-flic-fusion/caffe-heatmap-flic.caffemodel'; % Model weights
 
 % Add caffe matlab into path
-addpath('../')
+addpath('/Users/rizkyario/Documents/Codes/DeepLearning/caffe/matlab')
 
 % Image input directory
-opt.inputDir = 'sample_images/';
+opt.inputDir = '/Users/rizkyario/Documents/Codes/DeepLearning/caffe-heatmap/matlab/pose/sign/';
 
 % Create image file list
-imInds = 1:29;
+imInds = 1:22;
 for ind = 1:numel(imInds); files{ind} = [num2str(imInds(ind)) '.png']; end
 
 % Apply network
