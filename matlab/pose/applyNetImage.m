@@ -18,7 +18,7 @@ if opt.visualise
     heatmapVis = getConfidenceImage(heatmaps, img);
     figure(2),imshow(heatmapVis);
     [pathstr,name,ext] = fileparts(imgFile)
-    imwrite(heatmapVis,strcat('heatmap_',name,ext));
+    imwrite(heatmapVis,strcat('output/heatmap_',name,ext));
 
     % Original image overlaid with joints
     figure(1),imshow(uint8(img));
@@ -28,7 +28,7 @@ if opt.visualise
     f = getframe(gca);
     img = frame2im(f);
 
-    imwrite(uint8(img),strcat('join_',name,ext));
+    imwrite(uint8(img),strcat('output/join_',name,ext));
     hold off
     
 end
