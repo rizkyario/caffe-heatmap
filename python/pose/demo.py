@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 from scipy.misc import imresize
+from SaveFigureAsImage import SaveFigureAsImage
 import caffe
 
 # Make sure that caffe is on the python path:
@@ -21,14 +23,11 @@ net = caffe.Net(caffe_heatmap_root + 'models/heatmap-flic-fusion/matlab.prototxt
 # input preprocessing: 'data' is the name of the input blob == net.inputs[0]
 transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
 transformer.set_transpose('data', (2, 0, 1))
-# transformer.set_mean('data', np.load(caffe_root + 'python/caffe/imagenet/ilsvrc_2012_mean.npy').mean(1).mean(1)) # mean pixel
 transformer.set_raw_scale('data', 255)  # the reference model operates on images in [0,255] range instead of [0,1]
-# transformer.set_channel_swap('data', (2,1,0))  # the reference model has channels in BGR order instead of RGB
 
 # set net to batch size of 50
 net.blobs['data'].reshape(1, 3, 256, 256)
-
-net.blobs['data'].data[...] = transformer.preprocess('data', caffe.io.load_image(caffe_heatmap_root + 'python/pose/sign/2.png'))
+net.blobs['data'].data[...] = transformer.preprocess('data', caffe.io.load_image(caffe_heatmap_root + 'python/pose/sign/1.png'))
 net.forward()
 features = net.blobs['conv5_fusion'].data[...][0]
 
@@ -42,7 +41,6 @@ joints = np.zeros((7, 2))
 for i in range(0, 7):
     sub_img = heatmapResized[i]
     vec = sub_img.flatten()
-    print vec
     idx = np.argmax(vec)
 
     y = (idx.astype('int') / 256)
@@ -50,12 +48,16 @@ for i in range(0, 7):
     joints[i] = np.array([x, y])
 
 plt.imshow(transformer.deprocess('data', net.blobs['data'].data[0]))
-plt.scatter(joints[0][0], joints[0][1])
-plt.scatter(joints[1][0], joints[1][1])
-plt.scatter(joints[2][0], joints[2][1])
-plt.scatter(joints[3][0], joints[3][1])
-plt.scatter(joints[4][0], joints[4][1])
-plt.scatter(joints[5][0], joints[5][1])
-plt.scatter(joints[6][0], joints[6][1])
+
+plt.plot([joints[1][0], joints[3][0]], [joints[1][1], joints[3][1]], '.r-', linewidth=3, zorder=1)
+plt.plot([joints[3][0], joints[5][0]], [joints[3][1], joints[5][1]], '.g-', linewidth=3, zorder=1)
+
+plt.plot([joints[2][0], joints[4][0]], [joints[2][1], joints[4][1]], '.r-', linewidth=3, zorder=1)
+plt.plot([joints[4][0], joints[6][0]], [joints[4][1], joints[6][1]], '.g-', linewidth=3, zorder=1)
+
+cmap = cm.get_cmap(name='rainbow')
+for i in range(0, 7):
+    plt.scatter(joints[i][0], joints[i][1], color=cmap(i * 256 / 7), s=40, zorder=2)
 
 plt.show()
+plt.savefig(caffe_heatmap_root + 'python/pose/output/1.png')
